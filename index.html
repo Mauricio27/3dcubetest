@@ -39,7 +39,7 @@
 	 }
 
 	 .cube img:nth-child(1) {
-	     transform: rotateY(0deg) translateZ(100px);
+	     transform: scaleY(-1) scaleX(-1) rotateY(0deg) translateZ(100px);
 	 }
 	 .cube img:nth-child(2) {
 	     transform: rotateY(90deg) translateZ(100px);
@@ -112,90 +112,135 @@
 		     var numRowsToCut = 4;
 		     var widthOfOnePiece = this.width;
 		     var heightOfOnePiece = this.height/4;
-		     for(var x = 0; x < numColsToCut; ++x) {
-			 for(var y = 0; y < numRowsToCut; ++y) {
-			     var canvas = document.createElement('canvas');
-			     canvas.width = widthOfOnePiece;
-			     canvas.height = heightOfOnePiece;
-			     var context = canvas.getContext('2d');
-			     var rotateV = 1;
-			     
-			     context.drawImage(image,
-					       x * widthOfOnePiece,
-					       y * heightOfOnePiece,
-					       widthOfOnePiece,
-					       heightOfOnePiece,
-					       0,
-					       0,
-					       canvas.width, canvas.height);
-
-			     
-			     imagePieces.push(canvas.toDataURL());
-			 }
+		     var heights = [this.height*0.11,
+				    this.height*0.25,
+				    this.height*0.24,
+				    this.height*0.245,
+				    this.height*0.14]
+		     var totalH = 0;
+		     for(var y = 0; y < heights.length; y++) {
+			 var canvas = document.createElement('canvas');
+			 canvas.width = widthOfOnePiece;
+			 canvas.height = heights[y];
+			 var context = canvas.getContext('2d');
+			 context.drawImage(image,
+					   0,
+					   totalH,
+					   widthOfOnePiece,
+					   heights[y],
+					   0,
+					   0,
+					   canvas.width, canvas.height);
+			 
+			 totalH = totalH + heights[y]
+			 
+			 imagePieces.push(canvas.toDataURL());
 		     }
-
-		     // imagePieces now contains data urls of all the pieces of the image
-
 		     
-
-		     var face1 = document.getElementById('face-1');
-		     face1.src  =imagePieces[0];
-		     var face2 = document.getElementById('face-6');
+		     // imagePieces now contains data urls of all the pieces of the image
+		     var c = document.createElement("myCanvas");
+		     var c = document.createElement('canvas');
+		     c.width = widthOfOnePiece;
+		     c.height = heightOfOnePiece;
+		     var ctx = c.getContext("2d");
+		     var imageObj1 = new Image();
+		     var imageObj2 = new Image();
+		     imageObj1.src = imagePieces[0]
+		     var newImage;
+		     imageObj1.onload = function() {
+			 ctx.save();
+			 ctx.scale(1, -1);
+			 ctx.drawImage(imageObj1, 0, 0, this.width, -heights[0]);
+			 ctx.restore();
+			 imageObj2.src = imagePieces[4];
+			 imageObj2.onload = function() {
+			     ctx.drawImage(imageObj2, 0, heights[0], this.width, heights[4]);
+			     newImage = c.toDataURL();
+			     var face1 = document.getElementById('face-3');
+			     face1.src  =newImage;
+			 }
+		     };
+		     
+		     
+		     var face2 = document.getElementById('face-5');
 		     face2.src  =imagePieces[1];
-		     var face3 = document.getElementById('face-3');
+		     var face3 = document.getElementById('face-1');
 		     face3.src  =imagePieces[2];
-		     var face4 = document.getElementById('face-5');
+		     var face4 = document.getElementById('face-6');
 		     face4.src  =imagePieces[3];
 		 }
+
+
 	     }
 	 }
 
 
 	 var image = new Image();
 	 image.onload = cutImageUp;
-	 image.src = "DXGoGo-Alternate.jpg";
+	 image.src = "DXGogo-Graphics.png";
 	 function cutImageUp() {
 	     var imagePieces = [];
 	     var numColsToCut = 1;
 	     var numRowsToCut = 4;
 	     var widthOfOnePiece = this.width;
 	     var heightOfOnePiece = this.height/4;
-	     for(var x = 0; x < numColsToCut; ++x) {
-		 for(var y = 0; y < numRowsToCut; ++y) {
-		     var canvas = document.createElement('canvas');
-		     canvas.width = widthOfOnePiece;
-		     canvas.height = heightOfOnePiece;
-		     var context = canvas.getContext('2d');
-		     var rotateV = 1;
-		     
-		     context.drawImage(image,
-				       x * widthOfOnePiece,
-				       y * heightOfOnePiece,
-				       widthOfOnePiece,
-				       heightOfOnePiece,
-				       0,
-				       0,
-				       canvas.width, canvas.height);
-
-		     
-		     imagePieces.push(canvas.toDataURL());
-		 }
+	     var heights = [this.height*0.11,
+			    this.height*0.25,
+			    this.height*0.24,
+			    this.height*0.245,
+			    this.height*0.14]
+	     var totalH = 0;
+	     for(var y = 0; y < heights.length; y++) {
+		 var canvas = document.createElement('canvas');
+		 canvas.width = widthOfOnePiece;
+		 canvas.height = heights[y];
+		 var context = canvas.getContext('2d');
+		 context.drawImage(image,
+				   0,
+				   totalH,
+				   widthOfOnePiece,
+				   heights[y],
+				   0,
+				   0,
+				   canvas.width, canvas.height);
+		 
+		 totalH = totalH + heights[y]
+		 
+		 imagePieces.push(canvas.toDataURL());
 	     }
-
-	     // imagePieces now contains data urls of all the pieces of the image
-
 	     
-
-	     var face1 = document.getElementById('face-1');
-	     face1.src  =imagePieces[0];
-	     var face2 = document.getElementById('face-6');
+	     // imagePieces now contains data urls of all the pieces of the image
+	     var c = document.createElement("myCanvas");
+	     var c = document.createElement('canvas');
+	     c.width = widthOfOnePiece;
+	     c.height = heightOfOnePiece;
+	     var ctx = c.getContext("2d");
+	     var imageObj1 = new Image();
+	     var imageObj2 = new Image();
+	     imageObj1.src = imagePieces[0]
+	     var newImage;
+	     imageObj1.onload = function() {
+		 ctx.save();
+		 ctx.scale(1, -1);
+		 ctx.drawImage(imageObj1, 0, 0, this.width, -heights[0]);
+		 ctx.restore();
+		 imageObj2.src = imagePieces[4];
+		 imageObj2.onload = function() {
+		     ctx.drawImage(imageObj2, 0, heights[0], this.width, heights[4]);
+		     newImage = c.toDataURL();
+		     var face1 = document.getElementById('face-3');
+		     face1.src  =newImage;
+		 }
+	     };
+	     
+	     
+	     var face2 = document.getElementById('face-5');
 	     face2.src  =imagePieces[1];
-	     var face3 = document.getElementById('face-3');
+	     var face3 = document.getElementById('face-1');
 	     face3.src  =imagePieces[2];
-	     var face4 = document.getElementById('face-5');
+	     var face4 = document.getElementById('face-6');
 	     face4.src  =imagePieces[3];
 	 }
-	 
 
 	 
 	</script>
