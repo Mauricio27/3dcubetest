@@ -45,7 +45,7 @@
 	     transform: rotateY(90deg) translateZ(99px);
 	 }
 	 .cube img:nth-child(3) {
-	     transform:  scaleY(-1)  rotateY(180deg) translateZ(99px);
+	     transform:  scaleX(-1)  rotateY(180deg) translateZ(99px);
 	 }
 	 .cube img:nth-child(4) {
 	     transform: rotateY(-90deg) translateZ(99px);
@@ -150,11 +150,19 @@
 		     imageObj1.onload = function() {
 			 ctx.save();
 			 ctx.scale(1, -1);
-			 ctx.drawImage(imageObj1, 0, 0, this.width, -heights[0]);
+			 ctx.drawImage(imageObj1,
+				       0,
+				       0,
+				       this.width,
+				      -heights[0]);
 			 ctx.restore();
 			 imageObj2.src = imagePieces[4];
 			 imageObj2.onload = function() {
-			     ctx.drawImage(imageObj2, 0, heights[0], this.width, heights[4]);
+			     ctx.drawImage(imageObj2,
+					   0,
+					   heights[0],
+					   this.width,
+					   heights[4]);
 			     newImage = c.toDataURL();
 			     var face1 = document.getElementById('face-3');
 			     face1.src  =newImage;
@@ -177,7 +185,7 @@
 
 	 var image = new Image();
 	 image.onload = cutImageUp;
-	 image.src = "DXGogo-Graphics.png";
+	 image.src = "DXGoGo-Align.png";
 	 function cutImageUp() {
 	     var imagePieces = [];
 	     var numColsToCut = 1;
@@ -222,11 +230,23 @@
 	     imageObj1.onload = function() {
 		 ctx.save();
 		 ctx.scale(1, -1);
-		 ctx.drawImage(imageObj1, 0, 0, this.width, -heights[0]);
+		 ctx.drawImage(imageObj1,
+			       0,
+			       0,
+			       this.width,
+			      -heights[0]);
 		 ctx.restore();
 		 imageObj2.src = imagePieces[4];
 		 imageObj2.onload = function() {
-		     ctx.drawImage(imageObj2, 0, heights[0], this.width, heights[4]);
+		     ctx.save();
+		     ctx.scale(1, -1);
+		     ctx.drawImage(imageObj2,
+				   0,
+				   -heights[0],
+				   this.width,
+				   -heights[4]
+		     );
+		     ctx.restore();
 		     newImage = c.toDataURL();
 		     var face1 = document.getElementById('face-3');
 		     face1.src  =newImage;
