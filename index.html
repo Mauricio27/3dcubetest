@@ -89,7 +89,7 @@
 		<div class="row">
 		    <div class="col-12">
 			<form runat="server">
-			    <input accept="image/*" type='file' id="imgInp" style="margin-top:100px;"/>
+			    <input accept="image/*" type='file' id="imgInp" style="margin-top:100px;" onchange="changeImg(this)"/>
 			    
 			</form>
 		    </div>
@@ -100,102 +100,26 @@
 	    </div>
 	</div>
 	<script>
-	 imgInp.onchange = evt => {
-	     const [file] = imgInp.files
+	 // function onchange input file
+	 function changeImg(input){
+	     const [file] = input.files
 	     if (file) {
+		 // create a image data from input
 		 var image = new Image();
-		 image.onload = cutImageUp;
+		 image.onload = cutImageUp; //function to crop the image
 		 image.src = URL.createObjectURL(file);
-		 
-		 function cutImageUp() {
-		     var imagePieces = [];
-		     var numColsToCut = 1;
-		     var numRowsToCut = 4;
-		     var widthOfOnePiece = this.width;
-		     var heightOfOnePiece = this.height/4;
-		     var heights = [this.height*0.1261,
-				    this.height*0.2496,
-				    this.height*0.2273,
-				    this.height*0.2384,
-				    this.height*0.1586]
-		     var totalH = 0;
-		     for(var y = 0; y < heights.length; y++) {
-			 var canvas = document.createElement('canvas');
-			 canvas.width = widthOfOnePiece;
-			 canvas.height = heights[y];
-			 var context = canvas.getContext('2d');
-			 context.drawImage(image,
-					   0,
-					   totalH,
-					   widthOfOnePiece,
-					   heights[y],
-					   0,
-					   0,
-					   canvas.width, canvas.height);
-			 
-			 totalH = totalH + heights[y]
-			 
-			 imagePieces.push(canvas.toDataURL());
-		     }
-		     
-		     // imagePieces now contains data urls of all the pieces of the image
-		     var c = document.createElement("myCanvas");
-		     var c = document.createElement('canvas');
-		     c.width = widthOfOnePiece;
-		     c.height = heightOfOnePiece;
-		     var ctx = c.getContext("2d");
-		     var imageObj1 = new Image();
-		     var imageObj2 = new Image();
-		     imageObj1.src = imagePieces[0]
-		     var newImage;
-		     imageObj1.onload = function() {
-			 ctx.save();
-			 ctx.scale(1, -1);
-			 ctx.drawImage(imageObj1,
-				       0,
-				       0,
-				       this.width,
-				      -heights[0]);
-			 ctx.restore();
-			 imageObj2.src = imagePieces[4];
-			 imageObj2.onload = function() {
-			     ctx.save();
-			     ctx.scale(1, -1);
-			     ctx.drawImage(imageObj2,
-					   0,
-					  -heights[0],
-					   this.width,
-					  -heights[4]
-			     );
-			     ctx.restore();
-			     newImage = c.toDataURL();
-			     var face1 = document.getElementById('face-3');
-			     face1.src  =newImage;
-			 }
-		     };
-		     
-		     
-		     var face2 = document.getElementById('face-5');
-		     face2.src  =imagePieces[1];
-		     var face3 = document.getElementById('face-1');
-		     face3.src  =imagePieces[2];
-		     var face4 = document.getElementById('face-6');
-		     face4.src  =imagePieces[3];
-		 }
-
 	     }
 	 }
-
 
 	 var image = new Image();
 	 image.onload = cutImageUp;
 	 image.src = "DXGoGo-Align.png";
+	 
 	 function cutImageUp() {
 	     var imagePieces = [];
-	     var numColsToCut = 1;
-	     var numRowsToCut = 4;
 	     var widthOfOnePiece = this.width;
 	     var heightOfOnePiece = this.height/4;
+	     //percentage of divisions on the complate image
 	     var heights = [this.height*0.1261,
 			    this.height*0.2496,
 			    this.height*0.2273,
@@ -203,11 +127,13 @@
 			    this.height*0.1586]
 	     var totalH = 0;
 	     for(var y = 0; y < heights.length; y++) {
+		 //create a canvas for each section cut with the height corresponding to each section
 		 var canvas = document.createElement('canvas');
 		 canvas.width = widthOfOnePiece;
 		 canvas.height = heights[y];
 		 var context = canvas.getContext('2d');
-		 context.drawImage(image,
+		 //draw image in the canvas
+		 context.drawImage(this,
 				   0,
 				   totalH,
 				   widthOfOnePiece,
@@ -217,11 +143,12 @@
 				   canvas.width, canvas.height);
 		 
 		 totalH = totalH + heights[y]
-		 
+		 //save the image on imagePieces
 		 imagePieces.push(canvas.toDataURL());
 	     }
 	     
 	     // imagePieces now contains data urls of all the pieces of the image
+	     // second canvas to make the bottom image with the start and the end of image
 	     var c = document.createElement("myCanvas");
 	     var c = document.createElement('canvas');
 	     c.width = widthOfOnePiece;
@@ -229,10 +156,12 @@
 	     var ctx = c.getContext("2d");
 	     var imageObj1 = new Image();
 	     var imageObj2 = new Image();
+	     //first part of image
 	     imageObj1.src = imagePieces[0]
 	     var newImage;
 	     imageObj1.onload = function() {
 		 ctx.save();
+		 //flip the image to match the original image layout
 		 ctx.scale(1, -1);
 		 ctx.drawImage(imageObj1,
 			       0,
@@ -240,6 +169,7 @@
 			       this.width,
 			      -heights[0]);
 		 ctx.restore();
+		 //last part of the image in the same canvas to make a single image with start and end
 		 imageObj2.src = imagePieces[4];
 		 imageObj2.onload = function() {
 		     ctx.save();
@@ -252,12 +182,13 @@
 		     );
 		     ctx.restore();
 		     newImage = c.toDataURL();
+		     //load the image created on third face of cube,
 		     var face1 = document.getElementById('face-3');
 		     face1.src  =newImage;
 		 }
 	     };
 	     
-	     
+	     //load the rest of images on corresponding face
 	     var face2 = document.getElementById('face-5');
 	     face2.src  =imagePieces[1];
 	     var face3 = document.getElementById('face-1');
